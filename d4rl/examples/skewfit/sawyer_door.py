@@ -1,12 +1,12 @@
 import os.path as osp
 import multiworld.envs.mujoco as mwmj
-import hyperparameter as hyp
+import rlkit.util.hyperparameter as hyp
 from multiworld.envs.mujoco.cameras import sawyer_door_env_camera_v0
-from rlkit import run_experiment
-import vae.vae_schedules as vae_schedules
-from skewfit_experiments import \
+from rlkit.launchers.launcher_util import run_experiment
+import rlkit.torch.vae.vae_schedules as vae_schedules
+from rlkit.launchers.skewfit_experiments import \
     skewfit_full_experiment
-from torch import imsize48_default_architecture
+from rlkit.torch.vae.conv_vae import imsize48_default_architecture
 
 
 if __name__ == "__main__":

@@ -1,14 +1,14 @@
 from gym.envs.mujoco import HalfCheetahEnv
 
-import pytorch_util as ptu
-from env_replay_buffer import EnvReplayBuffer
-from wrappers import NormalizedBoxEnv
-from rlkit import setup_logger
-from samplers import MdpPathCollector
-from torch import TanhGaussianPolicy, MakeDeterministic
-from torch import SACTrainer
-from networks import FlattenMlp
-from torch_rl_algorithm import TorchBatchRLAlgorithm
+import rlkit.torch.pytorch_util as ptu
+from rlkit.data_management.env_replay_buffer import EnvReplayBuffer
+from rlkit.envs.wrappers import NormalizedBoxEnv
+from rlkit.launchers.launcher_util import setup_logger
+from rlkit.samplers.data_collector import MdpPathCollector
+from rlkit.torch.sac.policies import TanhGaussianPolicy, MakeDeterministic
+from rlkit.torch.sac.sac import SACTrainer
+from rlkit.torch.networks import FlattenMlp
+from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 
 
 def experiment(variant):

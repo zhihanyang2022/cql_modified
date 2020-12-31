@@ -1,16 +1,16 @@
-import hyperparameter as hyp
-from goal_generation.pickup_goal_dataset import (
+import rlkit.util.hyperparameter as hyp
+from rlkit.envs.goal_generation.pickup_goal_dataset import (
     generate_vae_dataset,
     get_image_presampled_goals_from_vae_env,
 )
 
-import vae.vae_schedules as vae_schedules
+import rlkit.torch.vae.vae_schedules as vae_schedules
 from multiworld.envs.mujoco.cameras import (
     sawyer_pick_and_place_camera,
 )
-from rlkit import run_experiment
-from skewfit_experiments import skewfit_full_experiment
-from torch import imsize48_default_architecture
+from rlkit.launchers.launcher_util import run_experiment
+from rlkit.launchers.skewfit_experiments import skewfit_full_experiment
+from rlkit.torch.vae.conv_vae import imsize48_default_architecture
 
 if __name__ == "__main__":
     num_images = 1

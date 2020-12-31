@@ -1,7 +1,7 @@
 import doodad as dd
 import torch as mp
 
-from rlkit import run_experiment_here
+from rlkit.launchers.launcher_util import run_experiment_here
 
 if __name__ == "__main__":
     import matplotlib
