@@ -12,6 +12,9 @@
       <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/samplers" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/torch" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/util" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/d4rl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/d4rl/examples" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (nju_rl_py37)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
