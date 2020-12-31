@@ -108,6 +108,7 @@ def experiment(variant):
     )
     algorithm.to(ptu.device)
     algorithm.train()
+    print(trainer._n_train_steps_total)
 
 
 def enable_gpus(gpu_str):
@@ -128,13 +129,13 @@ if __name__ == "__main__":
         env_name='Hopper-v2',
         sparse_reward=False,
         algorithm_kwargs=dict(
-            num_epochs=1000,
-            num_eval_steps_per_epoch=1000,
-            num_trains_per_train_loop=1000,
-            num_expl_steps_per_train_loop=1000,
-            min_num_steps_before_training=1000,
-            max_path_length=1000,
-            batch_size=256,
+            num_epochs=17,
+            num_eval_steps_per_epoch=100,
+            num_trains_per_train_loop=19,
+            num_expl_steps_per_train_loop=100,
+            min_num_steps_before_training=0,
+            max_path_length=100,
+            batch_size=10,
         ),
         trainer_kwargs=dict(
             discount=0.99,

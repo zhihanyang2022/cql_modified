@@ -47,6 +47,9 @@ class CQLTrainer(TorchTrainer):
             num_random=10,
             with_lagrange=False,
             lagrange_thresh=0.0,
+
+            # added by Zhihan
+            count_gradient_steps=False,
     ):
         super().__init__()
         self.env = env
@@ -126,6 +129,10 @@ class CQLTrainer(TorchTrainer):
 
         # For implementation on the 
         self.discrete = False
+
+        # added by Zhihan
+        if count_gradient_steps:
+            num_gradient_steps = 0
     
     def _get_tensor_values(self, obs, actions, network=None):
         action_shape = actions.shape[0]
@@ -147,6 +154,7 @@ class CQLTrainer(TorchTrainer):
             return new_obs_actions
 
     def train_from_torch(self, batch):
+
         self._current_epoch += 1
         rewards = batch['rewards']
         terminals = batch['terminals']
@@ -231,7 +239,7 @@ class CQLTrainer(TorchTrainer):
             qf2_loss = self.qf_criterion(q2_pred, q_target)
 
         ## add CQL
-        random_actions_tensor = torch.FloatTensor(q2_pred.shape[0] * self.num_random, actions.shape[-1]).uniform_(-1, 1) # .cuda()
+        random_actions_tensor = torch.FloatTensor(q2_pred.shape[0] * self.num_random, actions.shape[-1]).uniform_(-1, 1).cuda()
         curr_actions_tensor, curr_log_pis = self._get_policy_actions(obs, num_actions=self.num_random, network=self.policy)
         new_curr_actions_tensor, new_log_pis = self._get_policy_actions(next_obs, num_actions=self.num_random, network=self.policy)
         q1_rand = self._get_tensor_values(obs, random_actions_tensor, network=self.qf1)
