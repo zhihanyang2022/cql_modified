@@ -8,7 +8,7 @@ from torch import nn as nn
 import rlkit.torch.pytorch_util as ptu
 from rlkit.core.eval_util import create_stats_ordered_dict
 from rlkit.torch.torch_rl_algorithm import TorchTrainer
-from torch import autograd
+
 
 class CQLTrainer(TorchTrainer):
     def __init__(
@@ -268,8 +268,8 @@ class CQLTrainer(TorchTrainer):
                 [q2_rand - random_density, q2_next_actions - new_log_pis.detach(), q2_curr_actions - curr_log_pis.detach()], 1
             )
             
-        min_qf1_loss = torch.logsumexp(cat_q1 / self.temp, dim=1,).mean() * self.min_q_weight * self.temp
-        min_qf2_loss = torch.logsumexp(cat_q2 / self.temp, dim=1,).mean() * self.min_q_weight * self.temp
+        min_qf1_loss = torch.logsumexp(cat_q1 / self.temp, dim=1, ).mean() * self.min_q_weight * self.temp
+        min_qf2_loss = torch.logsumexp(cat_q2 / self.temp, dim=1, ).mean() * self.min_q_weight * self.temp
                     
         """Subtract the log likelihood of data"""
         min_qf1_loss = min_qf1_loss - q1_pred.mean() * self.min_q_weight

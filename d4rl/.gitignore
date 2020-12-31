@@ -2,8 +2,8 @@
 **/.DS_STORE
 **/*.pyc
 **/*.swp
-rlkit/launchers/config.py
-rlkit/launchers/conf_private.py
+examples/rlkit/launchers/config.py
+examples/rlkit/launchers/conf_private.py
 MANIFEST
 *.egg-info
 \.idea/

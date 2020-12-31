@@ -2,7 +2,7 @@ import os
 
 from gym.spaces import Box, Discrete, Tuple
 
-ENV_ASSET_DIR = os.path.join(os.path.dirname(__file__), 'assets')
+ENV_ASSET_DIR = os.path.join(os.path.dirname(__file__), 'envs/assets')
 
 
 def get_asset_full_path(file_name):

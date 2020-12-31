@@ -7,7 +7,7 @@ from gym.envs.mujoco import mujoco_env
 
 from rlkit.core.serializable import Serializable
 
-ENV_ASSET_DIR = os.path.join(os.path.dirname(__file__), 'assets')
+ENV_ASSET_DIR = os.path.join(os.path.dirname(__file__), 'envs/assets')
 
 
 class MujocoEnv(mujoco_env.MujocoEnv, Serializable):
@@ -34,7 +34,7 @@ class MujocoEnv(mujoco_env.MujocoEnv, Serializable):
             if model_path.startswith("/"):
                 fullpath = model_path
             else:
-                fullpath = os.path.join(os.path.dirname(__file__), "assets", model_path)
+                fullpath = os.path.join(os.path.dirname(__file__), "envs/assets", model_path)
             if not path.exists(fullpath):
                 raise IOError("File %s does not exist" % fullpath)
             self.frame_skip = frame_skip

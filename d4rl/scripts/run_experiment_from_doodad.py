@@ -1,5 +1,5 @@
 import doodad as dd
-import torch.multiprocessing as mp
+import torch as mp
 
 from rlkit.launchers.launcher_util import run_experiment_here
 
