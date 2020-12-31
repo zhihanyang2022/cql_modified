@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append('/home/zhihanyang/PycharmProjects/CQL/d4rl')
-
 import rlkit.torch.pytorch_util as ptu
 from rlkit.data_management.env_replay_buffer import EnvReplayBuffer
 from rlkit.envs.wrappers import NormalizedBoxEnv
