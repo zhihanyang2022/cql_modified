@@ -8,19 +8,19 @@ Note that one epoch = 5k steps, so 200 epochs = 1 million steps.
 """
 import gym
 
-import rlkit.torch.pytorch_util as ptu
-from rlkit.data_management.obs_dict_replay_buffer import ObsDictRelabelingBuffer
-from rlkit.exploration_strategies.base import \
+import pytorch_util as ptu
+from obs_dict_replay_buffer import ObsDictRelabelingBuffer
+from exploration_strategies import \
     PolicyWrappedWithExplorationStrategy
-from rlkit.exploration_strategies.gaussian_and_epsilon_strategy import (
+from exploration_strategies import (
     GaussianAndEpislonStrategy
 )
-from rlkit.launchers.launcher_util import setup_logger
-from rlkit.samplers.data_collector import GoalConditionedPathCollector
-from rlkit.torch.her.her import HERTrainer
-from rlkit.torch.networks import FlattenMlp, TanhMlpPolicy
-from rlkit.torch.td3.td3 import TD3Trainer
-from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
+from rlkit import setup_logger
+from samplers import GoalConditionedPathCollector
+from torch import HERTrainer
+from networks import FlattenMlp, TanhMlpPolicy
+from torch import TD3Trainer
+from torch_rl_algorithm import TorchBatchRLAlgorithm
 
 
 def experiment(variant):

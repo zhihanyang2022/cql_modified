@@ -5,17 +5,17 @@ Run DQN on grid world.
 import gym
 from torch import nn as nn
 
-from rlkit.exploration_strategies.base import \
+from exploration_strategies import \
     PolicyWrappedWithExplorationStrategy
-from rlkit.exploration_strategies.epsilon_greedy import EpsilonGreedy
-from rlkit.policies.argmax import ArgmaxDiscretePolicy
-from rlkit.torch.dqn.dqn import DQNTrainer
-from rlkit.torch.networks import Mlp
-import rlkit.torch.pytorch_util as ptu
-from rlkit.data_management.env_replay_buffer import EnvReplayBuffer
-from rlkit.launchers.launcher_util import setup_logger
-from rlkit.samplers.data_collector import MdpPathCollector
-from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
+from exploration_strategies import EpsilonGreedy
+from policies import ArgmaxDiscretePolicy
+from dqn import DQNTrainer
+from networks import Mlp
+import pytorch_util as ptu
+from env_replay_buffer import EnvReplayBuffer
+from rlkit import setup_logger
+from samplers import MdpPathCollector
+from torch_rl_algorithm import TorchBatchRLAlgorithm
 
 
 def experiment(variant):

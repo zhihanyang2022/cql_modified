@@ -1,9 +1,9 @@
-import rlkit.util.hyperparameter as hyp
+import hyperparameter as hyp
 from multiworld.envs.mujoco.cameras import sawyer_init_camera_zoomed_in
-from rlkit.launchers.launcher_util import run_experiment
-import rlkit.torch.vae.vae_schedules as vae_schedules
-from rlkit.launchers.skewfit_experiments import skewfit_full_experiment
-from rlkit.torch.vae.conv_vae import imsize48_default_architecture
+from rlkit import run_experiment
+import vae.vae_schedules as vae_schedules
+from skewfit_experiments import skewfit_full_experiment
+from torch import imsize48_default_architecture
 
 
 if __name__ == "__main__":

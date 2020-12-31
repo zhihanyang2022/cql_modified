@@ -1,9 +1,9 @@
-from rlkit.samplers.rollout_functions import rollout
-from rlkit.torch.pytorch_util import set_gpu_mode
+from samplers import rollout
+from pytorch_util import set_gpu_mode
 import argparse
 import torch
 import uuid
-from rlkit.core import logger
+from core import logger
 
 filename = str(uuid.uuid4())
 

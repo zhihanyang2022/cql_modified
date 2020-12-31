@@ -3,8 +3,8 @@ Example of running stuff on GCP
 """
 import time
 
-from rlkit.core import logger
-from rlkit.launchers.launcher_util import run_experiment
+from core import logger
+from rlkit import run_experiment
 from datetime import datetime
 from pytz import timezone
 import pytz
@@ -12,7 +12,7 @@ import pytz
 
 def example(variant):
     import torch
-    import rlkit.torch.pytorch_util as ptu
+    import pytorch_util as ptu
     print("Starting")
     logger.log(torch.__version__)
     date_format = '%m/%d/%Y %H:%M:%S %Z'

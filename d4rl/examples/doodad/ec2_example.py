@@ -3,8 +3,8 @@ Example of running stuff on EC2
 """
 import time
 
-from rlkit.core import logger
-from rlkit.launchers.launcher_util import run_experiment
+from core import logger
+from rlkit import run_experiment
 from datetime import datetime
 from pytz import timezone
 import pytz
