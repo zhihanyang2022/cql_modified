@@ -1,4 +1,6 @@
-Caution: This repository is fully based on Aviral Kumar's original CQL codebase. Please use his codebase if you are looking for the original CQL implementation by the authors.
+# Caution
+
+This repository is fully based on Aviral Kumar's original CQL codebase. Please use (and cite) his codebase if you are looking for the original CQL implementation by the authors. 
 
 # CQL
 
