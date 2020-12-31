@@ -1,3 +1,5 @@
+Caution: This repository is fully based on Aviral Kumar's original CQL codebase. Please use his codebase if you are looking for the original CQL implementation by the authors.
+
 # CQL
 
 Code for Conservative Q-Learning for Offline Reinforcement Learning (https://arxiv.org/abs/2006.04779)
