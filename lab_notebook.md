@@ -53,6 +53,18 @@ Additional parameters in Pycharm config:
 PYTHONUNBUFFERED=1;LD_LIBRARY_PATH=/home/zhihanyang/.mujoco/mujoco200/bin
 ```
 
+## SAC for gym mujoco
+
+![image-20210101151600791](https://i.loli.net/2021/01/01/payTe3bZchMfn6N.png)
+
+![image-20210101151641611](https://i.loli.net/2021/01/01/VMAncRfyHvljiIu.png)
+
+Performance of SAC learned temperature:
+
+-   Hopper-v2: around 3000
+-   Walker2d-v2: approaching 6000
+-   HalfCheetah-v2: approaching 15000
+
 ## Random policy baseline (for hopper only)
 
 This section discusses how the random-policy baseline (in terms of average returns) is computed using the existing CQL code-base. First, to do this, we have created a separate script called `examples/cql_mujoco_hopper_random_policy.py`.
