@@ -166,7 +166,7 @@ def run_experiment_here(
     return experiment_function(variant)
 
 
-def create_exp_name(exp_prefix, exp_id=0, seed=0):
+def create_exp_name(exp_prefix, exp_id=0, seed=0, simplified=True):
     """
     Create a semi-unique experiment name that has a timestamp
     :param exp_prefix:
@@ -175,6 +175,8 @@ def create_exp_name(exp_prefix, exp_id=0, seed=0):
     """
     now = datetime.datetime.now(dateutil.tz.tzlocal())
     timestamp = now.strftime('%Y_%m_%d_%H_%M_%S')
+    if simplified:  # remove exp_prefix from exp_name (modification)
+        return "%s" % timestamp
     return "%s_%s_%04d--s-%d" % (exp_prefix, timestamp, exp_id, seed)
 
 

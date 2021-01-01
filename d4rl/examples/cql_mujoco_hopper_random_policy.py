@@ -104,7 +104,7 @@ def experiment(variant):
     )
     algorithm.to(ptu.device)
     algorithm.train()
-    print(trainer._n_train_steps_total)
+    print('Number of gradient steps:', trainer._n_train_steps_total)
 
 
 def enable_gpus(gpu_str):
@@ -125,15 +125,15 @@ if __name__ == "__main__":
         env_name='Hopper-v2',
         sparse_reward=False,
         algorithm_kwargs=dict(
-            num_epochs=17,
-            num_eval_steps_per_epoch=100,
-            num_trains_per_train_loop=19,
-            num_expl_steps_per_train_loop=100,
-            min_num_steps_before_training=0,
-            max_path_length=100,
-            batch_size=10,
+            num_epochs=1,
+            num_eval_steps_per_epoch=10000,
+            num_trains_per_train_loop=0,  # ignore training
+            num_expl_steps_per_train_loop=0,  # ignore training
+            min_num_steps_before_training=0,  # ignore training
+            max_path_length=1000,
+            batch_size=256,  # ignore training
         ),
-        trainer_kwargs=dict(
+        trainer_kwargs=dict(  # all ignored for evaluation
             discount=0.99,
             soft_target_tau=5e-3,
             policy_lr=3E-5,
@@ -197,7 +197,7 @@ if __name__ == "__main__":
     variant['seed'] = args.seed
 
     rnd = np.random.randint(0, 1000000)
-    setup_logger(os.path.join('CQL_offline_mujoco_runs', str(rnd)), variant=variant,
-                 base_log_dir='/home/zhihanyang/exps/random_expert_CQL_runs')
+    setup_logger('cql_mujoco_hopper_random_policy', variant=variant,
+                 base_log_dir='/home/zhihanyang/exps/')
     ptu.set_gpu_mode(True)
     experiment(variant)

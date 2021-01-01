@@ -12,18 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/d4rl/examples/rlkit/samplers" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/d4rl/examples/rlkit/torch" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/d4rl/examples/rlkit/util" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/d4rl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/core" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/data_management" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/envs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/exploration_strategies" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/launchers" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/policies" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/samplers" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/torch" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/d4rl/rlkit/util" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (nju_rl_py37)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

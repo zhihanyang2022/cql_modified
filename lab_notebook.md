@@ -53,7 +53,97 @@ Additional parameters in Pycharm config:
 PYTHONUNBUFFERED=1;LD_LIBRARY_PATH=/home/zhihanyang/.mujoco/mujoco200/bin
 ```
 
-## Random and expert baseline for each task
+## Random policy baseline (for hopper only)
 
+This section discusses how the random-policy baseline (in terms of average returns) is computed using the existing CQL code-base. First, to do this, we have created a separate script called `examples/cql_mujoco_hopper_random_policy.py`.
 
+The arguments to the `BatchRLAlgorithm` class in `rlkit/core/batch_rl_algorithm.py ` are
+
+- `batch_rl = True` (line 195 of `examples/cql_mujoco_hopper_random_policy.py`)
+- `eval_both = True` (line 101 `examples/cql_mujoco_hopper_random_policy.py`.)
+- `self.q_learning_alg = False` (default)
+
+```python
+algorithm_kwargs=dict(
+            num_epochs=1,
+            num_eval_steps_per_epoch=10000,
+            num_trains_per_train_loop=0,  # set to zero to avoid training
+            num_expl_steps_per_train_loop=0,  # set to zero to avoid training
+            min_num_steps_before_training=0,  # set to zero to avoid training
+            max_path_length=1000,
+            batch_size=256,  # set to zero to avoid training
+),
+```
+
+These settings simplifies the `_train ` method . Code that are not ran due to these parameter settings are commented out below. Essentially, these settings change the training code into evaluation-only code: the code runs for one epoch only, completing however many paths it can, depending on stochasticity of the policy, `max_path_length` and `max_eval_steps_per_epoch`. As a word of caution, make sure to check that the number of gradient steps completed is zero.
+
+```python
+   def _train(self):
+        # if self.min_num_steps_before_training > 0 and not self.batch_rl:
+        #     init_expl_paths = self.expl_data_collector.collect_new_paths(
+        #        self.max_path_length,
+        #        self.min_num_steps_before_training,
+        #        discard_incomplete_paths=False,
+        #    )
+        #    self.replay_buffer.add_paths(init_expl_paths)
+        #    self.expl_data_collector.end_epoch(-1)
+
+        for epoch in gt.timed_for(
+                range(self._start_epoch, self.num_epochs),
+                save_itrs=True,
+        ):
+            # if self.q_learning_alg:
+            #    policy_fn = self.policy_fn
+            #    if self.trainer.discrete:
+            #        policy_fn = self.policy_fn_discrete
+            #    self.eval_data_collector.collect_new_paths(
+            #        policy_fn,
+            #        self.max_path_length,
+            #        self.num_eval_steps_per_epoch,
+            #        discard_incomplete_paths=True
+            #    )
+            else:
+                self.eval_data_collector.collect_new_paths(
+                    self.max_path_length,
+                    self.num_eval_steps_per_epoch,
+                    discard_incomplete_paths=True,
+                )
+            gt.stamp('evaluation sampling')
+
+            for _ in range(self.num_train_loops_per_epoch):
+                # if not self.batch_rl:
+                #    # Sample new paths only if not doing batch rl
+                #    new_expl_paths = self.expl_data_collector.collect_new_paths(
+                #        self.max_path_length,
+                #        self.num_expl_steps_per_train_loop,
+                #        discard_incomplete_paths=False,
+                #    )
+                #    gt.stamp('exploration sampling', unique=False)
+				#
+                #    self.replay_buffer.add_paths(new_expl_paths)
+                #    gt.stamp('data storing', unique=False)
+                elif self.eval_both:
+                    # Now evaluate the policy here:
+                    policy_fn = self.policy_fn
+                    # if self.trainer.discrete:
+                    #     policy_fn = self.policy_fn_discrete
+                    # new_expl_paths = self.expl_data_collector.collect_new_paths(
+                    #     policy_fn,
+                    #     self.max_path_length,
+                    #     self.num_eval_steps_per_epoch,
+                    #     discard_incomplete_paths=True,
+                    #)
+
+                    gt.stamp('policy fn evaluation')
+
+                self.training_mode(True)
+                for _ in range(self.num_trains_per_train_loop):
+                    # train_data = self.replay_buffer.random_batch(
+                    #     self.batch_size)
+                    # self.trainer.train(train_data)
+                gt.stamp('training', unique=False)
+                self.training_mode(False)
+
+            self._end_epoch(epoch)
+```
 
