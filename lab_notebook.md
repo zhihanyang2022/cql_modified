@@ -2,6 +2,12 @@
 
 [TOC]
 
+## Basics
+
+### Linux having problems with exFAT
+
+https://www.howtogeek.com/235655/how-to-mount-and-use-an-exfat-drive-on-linux/
+
 ## Count number of gradient steps
 
 Note crucially that: the `rlkit` package used by `CQL` has been modified compared to the original `rlkit` implementation. The following discussion refers to the first one.
