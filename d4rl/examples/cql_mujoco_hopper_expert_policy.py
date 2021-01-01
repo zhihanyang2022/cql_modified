@@ -57,8 +57,11 @@ def experiment(variant):
     policy = TanhGaussianPolicy(
         obs_dim=obs_dim,
         action_dim=action_dim,
-        hidden_sizes=[M, M, M],
+        hidden_sizes=[M, M],
     )
+
+    policy.set_param_with_d4rl_dataset(d4rl_dataset=eval_env.get_dataset())
+
     eval_policy = MakeDeterministic(policy)
     eval_path_collector = MdpPathCollector(
         eval_env,
@@ -126,7 +129,7 @@ if __name__ == "__main__":
         sparse_reward=False,
         algorithm_kwargs=dict(
             num_epochs=1,
-            num_eval_steps_per_epoch=10000,
+            num_eval_steps_per_epoch=1000,
             num_trains_per_train_loop=0,  # ignore training
             num_expl_steps_per_train_loop=0,  # ignore training
             min_num_steps_before_training=0,  # ignore training

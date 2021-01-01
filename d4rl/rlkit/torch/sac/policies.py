@@ -65,6 +65,28 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
             self.log_std = np.log(std)
             assert LOG_SIG_MIN <= self.log_std <= LOG_SIG_MAX
 
+    def set_param_with_d4rl_dataset(self, d4rl_dataset):
+
+        with torch.no_grad():
+
+            assert tuple(self.fcs[0].weight.size()) == d4rl_dataset['metadata/policy/fc0/weight'].shape
+            self.fcs[0].weight = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc0/weight']))
+            self.fcs[0].bias = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc0/bias']))
+
+            assert tuple(self.fcs[1].weight.size()) == d4rl_dataset['metadata/policy/fc1/weight'].shape
+            self.fcs[1].weight = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc1/weight']))
+            self.fcs[1].bias = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc1/bias']))
+
+            assert tuple(self.last_fc.weight.size()) == d4rl_dataset['metadata/policy/last_fc/weight'].shape
+            self.last_fc.weight = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/last_fc/weight']))
+            self.last_fc.bias = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/last_fc/bias']))
+
+            assert tuple(self.last_fc_log_std.weight.size()) == d4rl_dataset['metadata/policy/last_fc_log_std/weight'].shape
+            self.last_fc_log_std.weight = nn.Parameter(
+                torch.from_numpy(d4rl_dataset['metadata/policy/last_fc_log_std/weight']))
+            self.last_fc_log_std.bias = nn.Parameter(
+                torch.from_numpy(d4rl_dataset['metadata/policy/last_fc_log_std/bias']))
+
     def get_action(self, obs_np, deterministic=False):
         actions = self.get_actions(obs_np[None], deterministic=deterministic)
         return actions[0, :], {}
