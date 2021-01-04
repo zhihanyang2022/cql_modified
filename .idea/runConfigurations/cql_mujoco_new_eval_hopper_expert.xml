@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="cql_mujoco_new" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+  <configuration default="false" name="cql_mujoco_new_eval_hopper_expert" type="PythonConfigurationType" factoryName="Python">
     <module name="CQL" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -8,13 +8,13 @@
       <env name="LD_LIBRARY_PATH" value="$USER_HOME$/.mujoco/mujoco200/bin" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/d4rl/" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/d4rl/examples" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/d4rl/examples/cql_mujoco_new.py" />
-    <option name="PARAMETERS" value="--env=hopper-medium-v0 --policy_lr=3e-5 --seed=10 --lagrange_thresh=10.0 --min_q_weight=1 --min_q_version=3" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/d4rl/examples/cql_mujoco_new_eval.py" />
+    <option name="PARAMETERS" value="--env=hopper-expert-v1 --policy_lr=3e-5 --seed=10 --lagrange_thresh=10.0 --min_q_weight=1 --min_q_version=3" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

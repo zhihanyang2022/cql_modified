@@ -14,6 +14,7 @@ import numpy as np
 import h5py
 import d4rl, gym
 
+import torch
 
 def load_hdf5(dataset, replay_buffer):
     replay_buffer._observations = dataset['observations']
@@ -57,8 +58,29 @@ def experiment(variant):
     policy = TanhGaussianPolicy(
         obs_dim=obs_dim,
         action_dim=action_dim,
-        hidden_sizes=[M, M, M],
+        hidden_sizes=[M, M],
     )
+
+    dataset = eval_env.get_dataset()
+    policy.set_param_with_d4rl_dataset(d4rl_dataset=dataset)
+    with torch.no_grad():
+
+        ten_obs_np = dataset['observations'][:10]
+        ten_actions_np = dataset['actions'][:10]
+
+        # _, *_ = policy.forward(ptu.from_numpy(ten_obs_np), reparameterize=True, deterministic=False, return_log_prob=True)
+
+        log_prob_torch = policy.forward(ptu.from_numpy(ten_obs_np), chosen_actions=ptu.from_numpy(ten_actions_np))
+        predicted_log_prob = log_prob_torch.cpu().numpy().flatten()
+
+        print('========== predicted log prob of actions by the given policy ==========')
+        print(predicted_log_prob)
+        print('========== actual log prob ==========')
+        true_log_prob = dataset['infos/action_log_probs'][:10]
+        print(true_log_prob)
+        print('========== same? ==========')
+        print(np.allclose(predicted_log_prob, true_log_prob, atol=1e-5))
+
     eval_policy = MakeDeterministic(policy)
     eval_path_collector = MdpPathCollector(
         eval_env,
@@ -104,7 +126,6 @@ def experiment(variant):
     )
     algorithm.to(ptu.device)
     algorithm.train()
-    print('Number of gradient steps:', trainer._n_train_steps_total)
 
 
 def enable_gpus(gpu_str):
@@ -127,13 +148,13 @@ if __name__ == "__main__":
         algorithm_kwargs=dict(
             num_epochs=1,
             num_eval_steps_per_epoch=10000,
-            num_trains_per_train_loop=0,  # ignore training
-            num_expl_steps_per_train_loop=0,  # ignore training
-            min_num_steps_before_training=0,  # ignore training
+            num_trains_per_train_loop=0,
+            num_expl_steps_per_train_loop=0,
+            min_num_steps_before_training=0,
             max_path_length=1000,
-            batch_size=256,  # ignore training
+            batch_size=256,
         ),
-        trainer_kwargs=dict(  # all ignored for evaluation
+        trainer_kwargs=dict(
             discount=0.99,
             soft_target_tau=5e-3,
             policy_lr=3E-5,

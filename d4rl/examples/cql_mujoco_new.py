@@ -124,7 +124,7 @@ if __name__ == "__main__":
         env_name='Hopper-v2',
         sparse_reward=False,
         algorithm_kwargs=dict(
-            num_epochs=1000,
+            num_epochs=1000,  # the only things that was changed, so that the number of gradient steps is 1M
             num_eval_steps_per_epoch=1000,
             num_trains_per_train_loop=1000,
             num_expl_steps_per_train_loop=1000,
@@ -135,8 +135,8 @@ if __name__ == "__main__":
         trainer_kwargs=dict(
             discount=0.99,
             soft_target_tau=5e-3,
-            policy_lr=3E-5,
-            qf_lr=3E-4,
+            policy_lr=3E-5,  # page 29, policy learning rate
+            qf_lr=3E-4,  # page 29, Q-function learning rate
             reward_scale=1,
             use_automatic_entropy_tuning=True,
 
@@ -151,7 +151,7 @@ if __name__ == "__main__":
 
             # lagrange
             with_lagrange=True,  # Defaults to true
-            lagrange_thresh=10.0,
+            lagrange_thresh=10.0,  # page 29; choice of alpha
 
             # extra params
             num_random=10,
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     )
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--env", type=str, default='hopper-medium-v0')
+    parser.add_argument("--env", type=str)
     parser.add_argument("--gpu", default='0', type=str)
     parser.add_argument("--max_q_backup", type=str,
                         default="False")  # if we want to try max_{a'} backups, set this to true
@@ -171,11 +171,10 @@ if __name__ == "__main__":
                         type=int)  # Defaulted to 20000 (40000 or 10000 work similarly)
     parser.add_argument('--min_q_weight', default=1.0,
                         type=float)  # the value of alpha, set to 5.0 or 10.0 if not using lagrange
-    parser.add_argument('--policy_lr', default=1e-4, type=float)  # Policy learning rate
+    parser.add_argument('--policy_lr', default=3e-5, type=float)  # Policy learning rate
     parser.add_argument('--min_q_version', default=3, type=int)  # min_q_version = 3 (CQL(H)), version = 2 (CQL(rho))
-    parser.add_argument('--lagrange_thresh', default=5.0,
-                        type=float)  # the value of tau, corresponds to the CQL(lagrange) version
-    parser.add_argument('--seed', default=10, type=int)
+    parser.add_argument('--lagrange_thresh', type=float)  # the value of tau, corresponds to the CQL(lagrange) version
+    parser.add_argument('--seed', type=int)
 
     args = parser.parse_args()
     enable_gpus(args.gpu)
@@ -193,10 +192,19 @@ if __name__ == "__main__":
 
     variant['load_buffer'] = True
     variant['env_name'] = args.env
+
+    # ========== start logging ==========
+
+    assert args.seed is not None  # prevent the same seed being used twice accidentally
     variant['seed'] = args.seed
 
-    rnd = np.random.randint(0, 1000000)
-    setup_logger(os.path.join('CQL_offline_mujoco_runs', str(rnd)), variant=variant,
-                 base_log_dir='/home/zhihanyang/exps/random_expert_CQL_runs')
+    base_log_dir = '/home/zhihanyang/exps/'
+    log_dir = os.path.join(base_log_dir, f'{args.env}_{str(args.seed)}')
+    assert not os.path.isdir(log_dir)  # we must not run the same experiment twice using the same seed
+
+    setup_logger(simplify=True, simple_log_dir=log_dir, variant=variant)
+
+    # ========== end logging ==========
+
     ptu.set_gpu_mode(True)
     experiment(variant)

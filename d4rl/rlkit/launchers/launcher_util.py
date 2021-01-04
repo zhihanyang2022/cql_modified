@@ -223,6 +223,8 @@ def setup_logger(
         log_dir=None,
         git_infos=None,
         script_name=None,
+        simplify=False,  # added by Zhihan
+        simple_log_dir=None,  # added by Zhihan
         **create_log_dir_kwargs
 ):
     """
@@ -249,11 +251,16 @@ def setup_logger(
     :param script_name: If set, save the script name to this.
     :return:
     """
-    if git_infos is None:
-        git_infos = get_git_infos(conf.CODE_DIRS_TO_MOUNT)
-    first_time = log_dir is None
-    if first_time:
-        log_dir = create_log_dir(exp_prefix, **create_log_dir_kwargs)
+    if not simplify:
+        if git_infos is None:
+            git_infos = get_git_infos(conf.CODE_DIRS_TO_MOUNT)
+        first_time = log_dir is None
+        if first_time:
+            log_dir = create_log_dir(exp_prefix, **create_log_dir_kwargs)
+    else:
+        assert simple_log_dir is not None
+        log_dir = simple_log_dir
+        first_time = True
 
     if variant is not None:
         logger.log("Variant:")

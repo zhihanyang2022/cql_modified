@@ -6,6 +6,7 @@ from rlkit.policies.base import ExplorationPolicy, Policy
 from rlkit.torch.core import eval_np
 from rlkit.torch.distributions import TanhNormal
 from rlkit.torch.networks import Mlp
+from rlkit.torch.pytorch_util import from_numpy
 
 LOG_SIG_MAX = 2
 LOG_SIG_MIN = -5
@@ -70,22 +71,22 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
         with torch.no_grad():
 
             assert tuple(self.fcs[0].weight.size()) == d4rl_dataset['metadata/policy/fc0/weight'].shape
-            self.fcs[0].weight = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc0/weight']))
-            self.fcs[0].bias = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc0/bias']))
+            self.fcs[0].weight = nn.Parameter(from_numpy(d4rl_dataset['metadata/policy/fc0/weight']))
+            self.fcs[0].bias = nn.Parameter(from_numpy(d4rl_dataset['metadata/policy/fc0/bias']))
 
             assert tuple(self.fcs[1].weight.size()) == d4rl_dataset['metadata/policy/fc1/weight'].shape
-            self.fcs[1].weight = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc1/weight']))
-            self.fcs[1].bias = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/fc1/bias']))
+            self.fcs[1].weight = nn.Parameter(from_numpy(d4rl_dataset['metadata/policy/fc1/weight']))
+            self.fcs[1].bias = nn.Parameter(from_numpy(d4rl_dataset['metadata/policy/fc1/bias']))
 
             assert tuple(self.last_fc.weight.size()) == d4rl_dataset['metadata/policy/last_fc/weight'].shape
-            self.last_fc.weight = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/last_fc/weight']))
-            self.last_fc.bias = nn.Parameter(torch.from_numpy(d4rl_dataset['metadata/policy/last_fc/bias']))
+            self.last_fc.weight = nn.Parameter(from_numpy(d4rl_dataset['metadata/policy/last_fc/weight']))
+            self.last_fc.bias = nn.Parameter(from_numpy(d4rl_dataset['metadata/policy/last_fc/bias']))
 
             assert tuple(self.last_fc_log_std.weight.size()) == d4rl_dataset['metadata/policy/last_fc_log_std/weight'].shape
             self.last_fc_log_std.weight = nn.Parameter(
-                torch.from_numpy(d4rl_dataset['metadata/policy/last_fc_log_std/weight']))
+                from_numpy(d4rl_dataset['metadata/policy/last_fc_log_std/weight']))
             self.last_fc_log_std.bias = nn.Parameter(
-                torch.from_numpy(d4rl_dataset['metadata/policy/last_fc_log_std/bias']))
+                from_numpy(d4rl_dataset['metadata/policy/last_fc_log_std/bias']))
 
     def get_action(self, obs_np, deterministic=False):
         actions = self.get_actions(obs_np[None], deterministic=deterministic)
@@ -119,6 +120,7 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
             reparameterize=True,
             deterministic=False,
             return_log_prob=False,
+            chosen_actions=None,
     ):
         """
         :param obs: Observation
@@ -141,35 +143,40 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
         entropy = None
         mean_action_log_prob = None
         pre_tanh_value = None
-        if deterministic:
-            action = torch.tanh(mean)
+        if chosen_actions is None:
+            if deterministic:
+                action = torch.tanh(mean)
+            else:
+                tanh_normal = TanhNormal(mean, std)
+                if return_log_prob:
+                    if reparameterize is True:
+                        action, pre_tanh_value = tanh_normal.rsample(
+                            return_pretanh_value=True
+                        )
+                    else:
+                        action, pre_tanh_value = tanh_normal.sample(
+                            return_pretanh_value=True
+                        )
+                    log_prob = tanh_normal.log_prob(
+                        action,
+                        pre_tanh_value=pre_tanh_value
+                    )
+                    log_prob = log_prob.sum(dim=1, keepdim=True)
+                else:
+                    if reparameterize is True:
+                        action = tanh_normal.rsample()
+                    else:
+                        action = tanh_normal.sample()
+
+            return (
+                action, mean, log_std, log_prob, entropy, std,
+                mean_action_log_prob, pre_tanh_value,
+            )
         else:
             tanh_normal = TanhNormal(mean, std)
-            if return_log_prob:
-                if reparameterize is True:
-                    action, pre_tanh_value = tanh_normal.rsample(
-                        return_pretanh_value=True
-                    )
-                else:
-                    action, pre_tanh_value = tanh_normal.sample(
-                        return_pretanh_value=True
-                    )
-                log_prob = tanh_normal.log_prob(
-                    action,
-                    pre_tanh_value=pre_tanh_value
-                )
-                log_prob = log_prob.sum(dim=1, keepdim=True)
-            else:
-                if reparameterize is True:
-                    action = tanh_normal.rsample()
-                else:
-                    action = tanh_normal.sample()
-
-        return (
-            action, mean, log_std, log_prob, entropy, std,
-            mean_action_log_prob, pre_tanh_value,
-        )
-
+            log_prob = tanh_normal.log_prob(chosen_actions)
+            log_prob = log_prob.sum(dim=1, keepdim=True)
+            return log_prob
 
 class MakeDeterministic(nn.Module, Policy):
     def __init__(self, stochastic_policy):
