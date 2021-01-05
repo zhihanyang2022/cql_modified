@@ -14,6 +14,8 @@ import numpy as np
 import h5py
 import d4rl, gym
 
+import torch
+torch.autograd.set_detect_anomaly(True)
 
 def load_hdf5(dataset, replay_buffer):
     replay_buffer._observations = dataset['observations']
@@ -162,7 +164,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", type=str)
-    parser.add_argument("--gpu", default='0', type=str)
+    parser.add_argument("--gpu", default="", type=str)
     parser.add_argument("--max_q_backup", type=str,
                         default="False")  # if we want to try max_{a'} backups, set this to true
     parser.add_argument("--deterministic_backup", type=str,
@@ -177,7 +179,7 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int)
 
     args = parser.parse_args()
-    enable_gpus(args.gpu)
+    # enable_gpus(args.gpu)
     variant['trainer_kwargs']['max_q_backup'] = (True if args.max_q_backup == 'True' else False)
     variant['trainer_kwargs']['deterministic_backup'] = (True if args.deterministic_backup == 'True' else False)
     variant['trainer_kwargs']['min_q_weight'] = args.min_q_weight
@@ -206,5 +208,5 @@ if __name__ == "__main__":
 
     # ========== end logging ==========
 
-    ptu.set_gpu_mode(True)
+    ptu.set_gpu_mode(False)
     experiment(variant)
