@@ -156,7 +156,7 @@ class CQLTrainer(TorchTrainer):
 
     def train_from_torch(self, batch):
 
-        start_time = time.time()
+        # start_time = time.time()
 
         self._current_epoch += 1
         rewards = batch['rewards']
@@ -165,7 +165,7 @@ class CQLTrainer(TorchTrainer):
         actions = batch['actions']
         next_obs = batch['next_observations']
 
-        print('Data loading:' , time.time() - start_time)
+        # print('Data loading:' , time.time() - start_time)
 
         """
         Policy and Alpha Loss
@@ -174,7 +174,7 @@ class CQLTrainer(TorchTrainer):
             obs, reparameterize=True, return_log_prob=True,
         )
 
-        print('policy(obs) forwarding', time.time() - start_time)
+        # print('policy(obs) forwarding', time.time() - start_time)
         
         if self.use_automatic_entropy_tuning:
             alpha_loss = -(self.log_alpha * (log_pi + self.target_entropy).detach()).mean()
@@ -186,7 +186,7 @@ class CQLTrainer(TorchTrainer):
             alpha_loss = 0
             alpha = 1
 
-        print('adjust alpha', time.time() - start_time)
+        # print('adjust alpha', time.time() - start_time)
 
         if self.num_qs == 1:
             q_new_actions = self.qf1(obs, new_obs_actions)
@@ -248,7 +248,7 @@ class CQLTrainer(TorchTrainer):
             qf2_loss = self.qf_criterion(q2_pred, q_target)
 
         ## add CQL
-        random_actions_tensor = torch.FloatTensor(q2_pred.shape[0] * self.num_random, actions.shape[-1]).uniform_(-1, 1)#.cuda()
+        random_actions_tensor = torch.FloatTensor(q2_pred.shape[0] * self.num_random, actions.shape[-1]).uniform_(-1, 1).cuda()
         curr_actions_tensor, curr_log_pis = self._get_policy_actions(obs, num_actions=self.num_random, network=self.policy)
         new_curr_actions_tensor, new_log_pis = self._get_policy_actions(next_obs, num_actions=self.num_random, network=self.policy)
         q1_rand = self._get_tensor_values(obs, random_actions_tensor, network=self.qf1)
@@ -297,7 +297,7 @@ class CQLTrainer(TorchTrainer):
         qf1_loss = qf1_loss + min_qf1_loss
         qf2_loss = qf2_loss + min_qf2_loss
 
-        print('computing losses:', time.time() - start_time)
+        # print('computing losses:', time.time() - start_time)
 
         """
         Update networks
@@ -318,7 +318,7 @@ class CQLTrainer(TorchTrainer):
         policy_loss.backward(retain_graph=False)
         self.policy_optimizer.step()
 
-        print('gradient step:', time.time() - start_time)
+        # print('gradient step:', time.time() - start_time)
 
         """
         Soft Updates
@@ -331,7 +331,7 @@ class CQLTrainer(TorchTrainer):
                 self.qf2, self.target_qf2, self.soft_target_tau
             )
 
-        print('soft update:', time.time() - start_time)
+        # print('soft update:', time.time() - start_time)
 
         """
         Save some statistics for eval
@@ -431,7 +431,7 @@ class CQLTrainer(TorchTrainer):
             
         self._n_train_steps_total += 1
 
-        print('statistics logging:', time.time() - start_time)
+        # print('statistics logging:', time.time() - start_time)
 
     def get_diagnostics(self):
         return self.eval_statistics

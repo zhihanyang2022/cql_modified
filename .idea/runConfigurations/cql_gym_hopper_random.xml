@@ -14,7 +14,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/d4rl/examples/cql_mujoco_new.py" />
-    <option name="PARAMETERS" value="--env=hopper-random-v1 --lagrange_thresh=10 --seed=1" />
+    <option name="PARAMETERS" value="--env=hopper-random-v1 --policy_lr=1e-4 --lagrange_thresh=10 --seed=1" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

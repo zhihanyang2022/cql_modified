@@ -14,8 +14,9 @@ import numpy as np
 import h5py
 import d4rl, gym
 
-import torch
-torch.autograd.set_detect_anomaly(True)
+# warning: this code severely damages performance; training time x 3
+# import torch
+# torch.autograd.set_detect_anomaly(True)
 
 def load_hdf5(dataset, replay_buffer):
     replay_buffer._observations = dataset['observations']
@@ -137,13 +138,13 @@ if __name__ == "__main__":
         trainer_kwargs=dict(
             discount=0.99,
             soft_target_tau=5e-3,
-            policy_lr=3E-5,  # page 29, policy learning rate
+            policy_lr=1e-4,  # page 29, policy learning rate; but modified in github repo readme
             qf_lr=3E-4,  # page 29, Q-function learning rate
             reward_scale=1,
             use_automatic_entropy_tuning=True,
 
             # Target nets/ policy vs Q-function update
-            policy_eval_start=40000,
+            policy_eval_start=10000,
             num_qs=2,
 
             # min Q
@@ -164,22 +165,22 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", type=str)
-    parser.add_argument("--gpu", default="", type=str)
+    parser.add_argument("--gpu", default="0", type=str)
     parser.add_argument("--max_q_backup", type=str,
                         default="False")  # if we want to try max_{a'} backups, set this to true
     parser.add_argument("--deterministic_backup", type=str,
                         default="True")  # defaults to true, it does not backup entropy in the Q-function, as per Equation 3
-    parser.add_argument("--policy_eval_start", default=40000,
+    parser.add_argument("--policy_eval_start", default=10000,
                         type=int)  # Defaulted to 20000 (40000 or 10000 work similarly)
     parser.add_argument('--min_q_weight', default=1.0,
                         type=float)  # the value of alpha, set to 5.0 or 10.0 if not using lagrange
-    parser.add_argument('--policy_lr', default=3e-5, type=float)  # Policy learning rate
+    parser.add_argument('--policy_lr', default=1e-4, type=float)  # Policy learning rate
     parser.add_argument('--min_q_version', default=3, type=int)  # min_q_version = 3 (CQL(H)), version = 2 (CQL(rho))
     parser.add_argument('--lagrange_thresh', type=float)  # the value of tau, corresponds to the CQL(lagrange) version
     parser.add_argument('--seed', type=int)
 
     args = parser.parse_args()
-    # enable_gpus(args.gpu)
+    enable_gpus(args.gpu)
     variant['trainer_kwargs']['max_q_backup'] = (True if args.max_q_backup == 'True' else False)
     variant['trainer_kwargs']['deterministic_backup'] = (True if args.deterministic_backup == 'True' else False)
     variant['trainer_kwargs']['min_q_weight'] = args.min_q_weight
@@ -208,5 +209,5 @@ if __name__ == "__main__":
 
     # ========== end logging ==========
 
-    ptu.set_gpu_mode(False)
+    ptu.set_gpu_mode(True)
     experiment(variant)
