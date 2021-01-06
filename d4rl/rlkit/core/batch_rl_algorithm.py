@@ -58,6 +58,8 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             q_learning_alg=False,
             eval_both=False,
             batch_rl=False,
+            evaluation_mode=False,  # for evaluation of a trained policy (no training occurs)
+            evaluation_mode_num_paths=None,  # for evaluation of a trained policy (no training occurs)
     ):
         super().__init__(
             trainer,
@@ -78,6 +80,12 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         self.batch_rl = batch_rl
         self.q_learning_alg = q_learning_alg
         self.eval_both = eval_both
+        self.evaluation_mode = evaluation_mode
+        self.evaluation_mode_num_paths = evaluation_mode_num_paths
+        if not self.evaluation_mode:
+            assert self.evaluation_mode_num_paths is None
+        else:
+            assert self.evaluation_mode_num_paths is not None and not self.eval_both
 
         ### Reserve path collector for evaluation, visualization
         self._reserve_path_collector = MdpPathCollector(
@@ -119,21 +127,27 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
                 range(self._start_epoch, self.num_epochs),
                 save_itrs=True,
         ):
-            if self.q_learning_alg:
-                policy_fn = self.policy_fn
-                if self.trainer.discrete:
-                    policy_fn = self.policy_fn_discrete
-                self.eval_data_collector.collect_new_paths(
-                    policy_fn,
+            if not self.evaluation_mode:
+                if self.q_learning_alg:
+                    policy_fn = self.policy_fn
+                    if self.trainer.discrete:
+                        policy_fn = self.policy_fn_discrete
+                    self.eval_data_collector.collect_new_paths(
+                        policy_fn,
+                        self.max_path_length,
+                        self.num_eval_steps_per_epoch,
+                        discard_incomplete_paths=True
+                    )
+                else:
+                    self.eval_data_collector.collect_new_paths(
+                        self.max_path_length,
+                        self.num_eval_steps_per_epoch,
+                        discard_incomplete_paths=True,
+                    )
+            else:  # for evaluation
+                self.eval_data_collector.collect_new_paths_for_evaluation(
                     self.max_path_length,
-                    self.num_eval_steps_per_epoch,
-                    discard_incomplete_paths=True
-                )
-            else:
-                self.eval_data_collector.collect_new_paths(
-                    self.max_path_length,
-                    self.num_eval_steps_per_epoch,
-                    discard_incomplete_paths=True,
+                    self.evaluation_mode_num_paths,
                 )
             gt.stamp('evaluation sampling')
 

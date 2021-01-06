@@ -70,6 +70,34 @@ class MdpPathCollector(PathCollector):
         self._epoch_paths.extend(paths)
         return paths
 
+    def collect_new_paths_for_evaluation(self, max_path_length, num_paths):
+        """
+        Collect a fixed number (set by user) of paths for evaluating a policy.
+        """
+        paths = []
+        num_steps_collected = 0
+        for _ in range(num_paths):
+
+            path = rollout(
+                self._env,
+                self._policy,
+                max_path_length=max_path_length,
+            )
+
+            path_len = len(path['actions'])
+            num_steps_collected += path_len
+
+            ## Used to sparsify reward
+            if self._sparse_reward:
+                random_noise = np.random.normal(size=path['rewards'].shape)
+                path['rewards'] = path['rewards'] + 1.0 * random_noise
+
+            paths.append(path)
+        self._num_paths_total += len(paths)
+        self._num_steps_total += num_steps_collected
+        self._epoch_paths.extend(paths)
+        return paths
+
     def get_epoch_paths(self):
         return self._epoch_paths
 
