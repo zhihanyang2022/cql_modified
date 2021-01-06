@@ -14,8 +14,9 @@ import numpy as np
 import h5py
 import d4rl, gym
 
+import torch
+
 # warning: this code severely damages performance; training time x 3
-# import torch
 # torch.autograd.set_detect_anomaly(True)
 
 def load_hdf5(dataset, replay_buffer):
@@ -29,9 +30,10 @@ def load_hdf5(dataset, replay_buffer):
     replay_buffer._top = replay_buffer._size
 
 
-def experiment(variant):
+def experiment(variant, policy_save_dir):
     eval_env = gym.make(variant['env_name'])
     expl_env = eval_env
+    policy_save_path = os.path.join(policy_save_dir, 'policy_params.pth')
 
     obs_dim = expl_env.observation_space.low.size
     action_dim = eval_env.action_space.low.size
@@ -107,6 +109,7 @@ def experiment(variant):
     )
     algorithm.to(ptu.device)
     algorithm.train()
+    torch.save(policy.state_dict(), policy_save_path)
 
 
 def enable_gpus(gpu_str):
@@ -127,7 +130,7 @@ if __name__ == "__main__":
         env_name='Hopper-v2',
         sparse_reward=False,
         algorithm_kwargs=dict(
-            num_epochs=1000,  # the only things that was changed, so that the number of gradient steps is 1M
+            num_epochs=100,  # the only things that was changed, so that the number of gradient steps is 1M
             num_eval_steps_per_epoch=1000,
             num_trains_per_train_loop=1000,
             num_expl_steps_per_train_loop=1000,
@@ -202,7 +205,7 @@ if __name__ == "__main__":
     variant['seed'] = args.seed
 
     base_log_dir = '/home/zhihanyang/exps/'
-    log_dir = os.path.join(base_log_dir, f'{args.env}_{str(args.seed)}')
+    log_dir = os.path.join(base_log_dir, f'{args.env[:-3]}_{str(args.seed)}')
     assert not os.path.isdir(log_dir)  # we must not run the same experiment twice using the same seed
 
     setup_logger(simplify=True, simple_log_dir=log_dir, variant=variant)
@@ -210,4 +213,4 @@ if __name__ == "__main__":
     # ========== end logging ==========
 
     ptu.set_gpu_mode(True)
-    experiment(variant)
+    experiment(variant, policy_save_dir=log_dir)
